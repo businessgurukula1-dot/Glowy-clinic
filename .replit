@@ -1,0 +1,57 @@
+modules = ["nodejs-20", "web", "postgresql-16"]
+run = "npm run dev"
+hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
+
+[nix]
+channel = "stable-24_05"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
+[env]
+PORT = "5000"
+
+[deployment]
+deploymentTarget = "autoscale"
+build = ["npm", "run", "build"]
+run = ["node", "./dist/index.cjs"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[agent]
+mockupState = "FULLSTACK"
+integrations = ["javascript_database:1.0.0", "javascript_replit_auth:2.0.0", "notion:1.0.0"]
+
+[userenv]
+
+[userenv.shared]
+FIREBASE_API_KEY = "AIzaSyDiaUn2yKjhD0q7XYKAwQssOTCZrxcVzbM"
+FIREBASE_AUTH_DOMAIN = "glowifyme-d139d.firebaseapp.com"
+FIREBASE_PROJECT_ID = "glowifyme-d139d"
+FIREBASE_STORAGE_BUCKET = "glowifyme-d139d.firebasestorage.app"
+FIREBASE_MESSAGING_SENDER_ID = "1071151897506"
+FIREBASE_APP_ID = "1:1071151897506:web:73e0bc8bcf73fed89930fb"
